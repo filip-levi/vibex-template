@@ -10,7 +10,7 @@ Minimal boilerplate to kickstart full-stack apps.
 - ☁️ Instant Vercel deployment
 
 # Prerequirements
-- NodeJS
+- Node JS
 
 ## Getting Started
 
