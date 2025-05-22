@@ -9,6 +9,9 @@ Minimal boilerplate to kickstart full-stack apps.
 - 🧪 Jest + React Testing Library
 - ☁️ Instant Vercel deployment
 
+# Prerequirements
+- NodeJS
+
 ## Getting Started
 
 ```bash
