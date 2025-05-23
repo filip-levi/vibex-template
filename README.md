@@ -2,6 +2,8 @@
 
 Minimal boilerplate to kickstart full-stack apps.
 
+Created by WebX
+
 ## Features
 
 - ✅ App Router with Next.js 15+
@@ -11,7 +13,7 @@ Minimal boilerplate to kickstart full-stack apps.
 
 # Prerequirements
 - NodeJS
-- DzodeNS
+- React
 
 ## Getting Started
 
