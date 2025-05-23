@@ -151,7 +151,7 @@ export default function AgentPage({ params }: any) {
       {agent.role === "Expense Analyst" && (
         <>
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center my-6">
-            ~ or ~
+            Dashboard
           </h2>
           <ExpenseTracker
             key={expenseReports.length}
@@ -163,7 +163,7 @@ export default function AgentPage({ params }: any) {
       {agent.role === "Well-being Support" && (
         <>
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center my-6">
-            ~ or ~
+            Dashboard
           </h2>
           <SickLeaveTracker />
         </>
