@@ -1,4 +1,4 @@
-import { Mermaid } from '@/components/ui/mermaid';
+import { Mermaid } from '@/components/mermaid';
 
 const diagram = `
 graph TD

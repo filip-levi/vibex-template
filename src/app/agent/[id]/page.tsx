@@ -1,11 +1,12 @@
-"use client";
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import { agents } from "@/data/agents";
-import AgentChat from "@/components/AgentChat";
+'use client';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft } from 'lucide-react';
+import { agents } from '@/data/agents';
+import AgentChat from '@/components/AgentChat';
+import ExpenseTracker from '@/components/ExpenseTracker';
 
 // @typescript-ignore
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,7 +51,7 @@ export default function AgentPage({ params }: any) {
             <div className="flex items-center gap-4 mb-6">
               <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-blue-100">
                 <Image
-                  src={agent.image || "/placeholder.svg"}
+                  src={agent.image || '/placeholder.svg'}
                   alt={agent.name}
                   fill
                   className="object-cover"
@@ -94,6 +95,15 @@ export default function AgentPage({ params }: any) {
           </div>
         </div>
       </div>
+
+      {agent.role === 'Expense Analyst' && (
+        <>
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center my-6">
+            ~ or ~
+          </h2>
+          <ExpenseTracker />
+        </>
+      )}
 
       {/* Footer */}
       <footer className="bg-blue-800 text-white py-6">
