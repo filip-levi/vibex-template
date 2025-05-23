@@ -1,20 +1,18 @@
-'use client';
+"use client";
 
-import type React from 'react';
-
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Plus,
   Calendar,
@@ -22,7 +20,9 @@ import {
   FileText,
   Trash2,
   Edit,
-} from 'lucide-react';
+  Play,
+} from "lucide-react";
+import AgentChatInterface from "./AgentChat";
 
 // Expense Report type
 type ExpenseReport = {
@@ -39,49 +39,62 @@ type ExpenseReport = {
 // Sample data
 const sampleReports: ExpenseReport[] = [
   {
-    id: '1',
-    expenseReportName: 'Business Trip to NYC',
-    description: 'Client meetings and conference attendance',
-    currency: 'USD',
-    cashAdvance: '500.00',
-    notes: 'Hotel and meals covered by company card',
-    date: '2025-05-20T00:00:00.000Z',
-    createdAt: new Date('2025-05-20'),
+    id: "1",
+    expenseReportName: "Business Trip to NYC",
+    description: "Client meetings and conference attendance",
+    currency: "USD",
+    cashAdvance: "500.00",
+    notes: "Hotel and meals covered by company card",
+    date: "2025-05-20T00:00:00.000Z",
+    createdAt: new Date("2025-05-20"),
   },
   {
-    id: '2',
-    expenseReportName: 'Q2 Marketing Events',
-    description: 'Trade show booth and promotional materials',
-    currency: 'USD',
-    cashAdvance: '1200.00',
-    notes: 'Receipts attached for all purchases',
-    date: '2025-05-15T00:00:00.000Z',
-    createdAt: new Date('2025-05-15'),
+    id: "2",
+    expenseReportName: "Q2 Marketing Events",
+    description: "Trade show booth and promotional materials",
+    currency: "USD",
+    cashAdvance: "1200.00",
+    notes: "Receipts attached for all purchases",
+    date: "2025-05-15T00:00:00.000Z",
+    createdAt: new Date("2025-05-15"),
   },
 ];
 
 const currencies = [
-  { value: 'USD', label: 'USD - US Dollar' },
-  { value: 'EUR', label: 'EUR - Euro' },
-  { value: 'GBP', label: 'GBP - British Pound' },
-  { value: 'JPY', label: 'JPY - Japanese Yen' },
-  { value: 'CAD', label: 'CAD - Canadian Dollar' },
-  { value: 'AUD', label: 'AUD - Australian Dollar' },
+  { value: "USD", label: "USD - US Dollar" },
+  { value: "EUR", label: "EUR - Euro" },
+  { value: "GBP", label: "GBP - British Pound" },
+  { value: "JPY", label: "JPY - Japanese Yen" },
+  { value: "CAD", label: "CAD - Canadian Dollar" },
+  { value: "AUD", label: "AUD - Australian Dollar" },
 ];
 
-export default function ExpenseTracker() {
-  const [reports, setReports] = useState<ExpenseReport[]>(sampleReports);
+export default function ExpenseTracker({
+  reportsFromAgent,
+}: {
+  reportsFromAgent?: ExpenseReport[];
+}) {
+  const [reports, setReports] = useState<ExpenseReport[]>(
+    reportsFromAgent && reportsFromAgent.length > 0
+      ? [...reportsFromAgent, ...sampleReports]
+      : sampleReports
+  );
   const [showForm, setShowForm] = useState(false);
   const [editingReport, setEditingReport] = useState<ExpenseReport | null>(
     null
   );
   const [formData, setFormData] = useState({
-    expenseReportName: '',
-    description: '',
-    currency: 'USD',
-    cashAdvance: '',
-    notes: '',
-    date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+    expenseReportName: "",
+    description: "",
+    currency: "USD",
+    cashAdvance: "",
+    notes: "",
+    date: new Date().toISOString().split("T")[0], // Today's date in YYYY-MM-DD format
+  });
+  const [showAgentChat, setShowAgentChat] = useState(false);
+  const agentRef = useRef<{ id: string; name: string }>({
+    id: "agent_01jvypgajzfav98fvb9zx0ezx2", // Penny Niner, Expense Analyst
+    name: "Penny Niner",
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -92,7 +105,7 @@ export default function ExpenseTracker() {
     e.preventDefault();
 
     if (!formData.expenseReportName.trim()) {
-      alert('Please enter an expense report name');
+      alert("Please enter an expense report name");
       return;
     }
 
@@ -119,12 +132,12 @@ export default function ExpenseTracker() {
 
     // Reset form
     setFormData({
-      expenseReportName: '',
-      description: '',
-      currency: 'USD',
-      cashAdvance: '',
-      notes: '',
-      date: new Date().toISOString().split('T')[0],
+      expenseReportName: "",
+      description: "",
+      currency: "USD",
+      cashAdvance: "",
+      notes: "",
+      date: new Date().toISOString().split("T")[0],
     });
     setShowForm(false);
     setEditingReport(null);
@@ -134,26 +147,26 @@ export default function ExpenseTracker() {
     setEditingReport(report);
     setFormData({
       expenseReportName: report.expenseReportName,
-      description: report.description || '',
+      description: report.description || "",
       currency: report.currency,
-      cashAdvance: report.cashAdvance || '',
-      notes: report.notes || '',
-      date: new Date(report.date).toISOString().split('T')[0],
+      cashAdvance: report.cashAdvance || "",
+      notes: report.notes || "",
+      date: new Date(report.date).toISOString().split("T")[0],
     });
     setShowForm(true);
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this expense report?')) {
+    if (confirm("Are you sure you want to delete this expense report?")) {
       setReports((prev) => prev.filter((report) => report.id !== id));
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -161,10 +174,62 @@ export default function ExpenseTracker() {
     return reports
       .filter((report) => report.cashAdvance)
       .reduce(
-        (total, report) => total + Number.parseFloat(report.cashAdvance || '0'),
+        (total, report) => total + Number.parseFloat(report.cashAdvance || "0"),
         0
       );
   };
+
+  // Handler for agent summary
+  const handleAgentSummary = (summary: Record<string, unknown>) => {
+    setShowAgentChat(false);
+    if (!summary) return;
+    // Create and add the new report directly
+    const newReport: ExpenseReport = {
+      id: Date.now().toString(),
+      expenseReportName:
+        typeof summary.expenseReportName === "string"
+          ? summary.expenseReportName
+          : "",
+      description:
+        typeof summary.description === "string"
+          ? summary.description
+          : undefined,
+      currency: typeof summary.currency === "string" ? summary.currency : "USD",
+      cashAdvance:
+        typeof summary.cashAdvance === "string"
+          ? summary.cashAdvance
+          : undefined,
+      notes: typeof summary.notes === "string" ? summary.notes : undefined,
+      date:
+        typeof summary.date === "string"
+          ? new Date(summary.date).toISOString()
+          : new Date().toISOString(),
+      createdAt: new Date(),
+    };
+    setReports((prev) => [newReport, ...prev]);
+    setFormData({
+      expenseReportName: "",
+      description: "",
+      currency: "USD",
+      cashAdvance: "",
+      notes: "",
+      date: new Date().toISOString().split("T")[0],
+    });
+    setShowForm(false);
+    setEditingReport(null);
+  };
+
+  // If new reports come from agent, add them to the list
+  useEffect(() => {
+    if (reportsFromAgent && reportsFromAgent.length > 0) {
+      setReports((prev) => {
+        // Only add new agent reports that aren't already in the list
+        const existingIds = new Set(prev.map((r) => r.id));
+        const newOnes = reportsFromAgent.filter((r) => !existingIds.has(r.id));
+        return [...newOnes, ...prev];
+      });
+    }
+  }, [reportsFromAgent]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -245,25 +310,37 @@ export default function ExpenseTracker() {
 
         {/* Action Button */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Expense Reports</h2>
-          <Button
-            onClick={() => {
-              setShowForm(!showForm);
-              setEditingReport(null);
-              setFormData({
-                expenseReportName: '',
-                description: '',
-                currency: 'USD',
-                cashAdvance: '',
-                notes: '',
-                date: new Date().toISOString().split('T')[0],
-              });
-            }}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            {showForm ? 'Cancel' : 'New Report'}
-          </Button>
+          <h2 className="text-2xl font-bold text-gray-800" id="#expensereports">
+            Expense Reports
+          </h2>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                setShowForm(!showForm);
+                setEditingReport(null);
+                setFormData({
+                  expenseReportName: "",
+                  description: "",
+                  currency: "USD",
+                  cashAdvance: "",
+                  notes: "",
+                  date: new Date().toISOString().split("T")[0],
+                });
+              }}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {showForm ? "Cancel" : "New Report"}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setShowAgentChat(true)}
+              className="border-blue-600 text-blue-600 hover:bg-blue-50"
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Import from Agent
+            </Button>
+          </div>
         </div>
 
         {/* Form */}
@@ -272,8 +349,8 @@ export default function ExpenseTracker() {
             <CardHeader>
               <CardTitle>
                 {editingReport
-                  ? 'Edit Expense Report'
-                  : 'Create New Expense Report'}
+                  ? "Edit Expense Report"
+                  : "Create New Expense Report"}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -285,7 +362,7 @@ export default function ExpenseTracker() {
                       id="expenseReportName"
                       value={formData.expenseReportName}
                       onChange={(e) =>
-                        handleInputChange('expenseReportName', e.target.value)
+                        handleInputChange("expenseReportName", e.target.value)
                       }
                       placeholder="Enter report name"
                       required
@@ -299,7 +376,7 @@ export default function ExpenseTracker() {
                       type="date"
                       value={formData.date}
                       onChange={(e) =>
-                        handleInputChange('date', e.target.value)
+                        handleInputChange("date", e.target.value)
                       }
                       required
                     />
@@ -309,8 +386,8 @@ export default function ExpenseTracker() {
                     <Label htmlFor="currency">Currency *</Label>
                     <Select
                       value={formData.currency}
-                      onValueChange={(value) =>
-                        handleInputChange('currency', value)
+                      onValueChange={(value: string) =>
+                        handleInputChange("currency", value)
                       }
                     >
                       <SelectTrigger>
@@ -337,7 +414,7 @@ export default function ExpenseTracker() {
                       step="0.01"
                       value={formData.cashAdvance}
                       onChange={(e) =>
-                        handleInputChange('cashAdvance', e.target.value)
+                        handleInputChange("cashAdvance", e.target.value)
                       }
                       placeholder="0.00"
                     />
@@ -350,7 +427,7 @@ export default function ExpenseTracker() {
                     id="description"
                     value={formData.description}
                     onChange={(e) =>
-                      handleInputChange('description', e.target.value)
+                      handleInputChange("description", e.target.value)
                     }
                     placeholder="What is this expense report for?"
                   />
@@ -361,7 +438,7 @@ export default function ExpenseTracker() {
                   <Textarea
                     id="notes"
                     value={formData.notes}
-                    onChange={(e) => handleInputChange('notes', e.target.value)}
+                    onChange={(e) => handleInputChange("notes", e.target.value)}
                     placeholder="Additional notes about this expense report"
                     rows={3}
                   />
@@ -372,7 +449,7 @@ export default function ExpenseTracker() {
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-700"
                   >
-                    {editingReport ? 'Update Report' : 'Create Report'}
+                    {editingReport ? "Update Report" : "Create Report"}
                   </Button>
                   <Button
                     type="button"
@@ -449,7 +526,7 @@ export default function ExpenseTracker() {
                         Cash Advance:
                       </span>
                       <span className="text-sm font-bold text-green-600">
-                        {report.currency}{' '}
+                        {report.currency}{" "}
                         {Number.parseFloat(report.cashAdvance).toFixed(2)}
                       </span>
                     </div>
@@ -482,6 +559,24 @@ export default function ExpenseTracker() {
               <Plus className="h-4 w-4 mr-2" />
               Create Your First Report
             </Button>
+          </div>
+        )}
+
+        {/* Agent Chat Modal */}
+        {showAgentChat && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-lg shadow-lg p-4 max-w-md w-full relative">
+              <button
+                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                onClick={() => setShowAgentChat(false)}
+              >
+                ×
+              </button>
+              <AgentChatInterface
+                agent={agentRef.current}
+                onSummary={handleAgentSummary}
+              />
+            </div>
           </div>
         )}
       </div>

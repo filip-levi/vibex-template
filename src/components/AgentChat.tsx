@@ -1,21 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
+"use client";
 
-import type React from 'react';
+import type React from "react";
 
-import { useCallback, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Play, Square } from 'lucide-react';
-import { useConversation } from '@11labs/react';
-import { cn } from '@/lib/utils';
+import { useCallback, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Play, Square } from "lucide-react";
+import { useConversation } from "@11labs/react";
+import { cn } from "@/lib/utils";
 
 interface Message {
   content: string;
-  source: 'ai' | 'user';
+  source: "ai" | "user";
   timestamp: Date;
 }
 
-export default function AgentChatInterface({ agent }: { agent: any }) {
+interface AgentChatProps {
+  agent: any;
+  onSummary?: (summary: any) => void;
+}
+
+export default function AgentChatInterface({
+  agent,
+  onSummary,
+}: AgentChatProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -31,21 +39,23 @@ export default function AgentChatInterface({ agent }: { agent: any }) {
 
   const conversation = useConversation({
     onConnect: () => {
-      console.log('Connected');
+      console.log("Connected");
     },
     onDisconnect: async () => {
       const conversationId = conversation.getId();
-      console.log('Disconnected');
-      const { summary } = await fetch('/api/fetch-summary', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      console.log("Disconnected");
+      const summaryResponse = await fetch("/api/fetch-summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversationId }),
       }).then((r) => r.json());
-
-      console.log('Summary:', summary);
+      console.log("Summary:", summaryResponse);
+      if (onSummary && summaryResponse && !summaryResponse.error) {
+        onSummary(summaryResponse);
+      }
     },
     onMessage: (message) => {
-      console.log('Message:', message);
+      console.log("Message:", message);
       setMessages((prev) => [
         ...prev,
         {
@@ -55,7 +65,7 @@ export default function AgentChatInterface({ agent }: { agent: any }) {
         },
       ]);
     },
-    onError: (error) => console.error('Error:', error),
+    onError: (error) => console.error("Error:", error),
   });
 
   const startConversation = useCallback(async () => {
@@ -65,21 +75,25 @@ export default function AgentChatInterface({ agent }: { agent: any }) {
         agentId: agent.id,
       });
     } catch (error) {
-      console.error('Failed to start conversation:', error);
+      console.error("Failed to start conversation:", error);
     }
   }, [conversation, agent.id]);
 
   const stopConversation = useCallback(async () => {
     const conversationId = conversation.getId();
     await conversation.endSession();
-    const { summary } = await fetch('/api/fetch-summary', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const result = await fetch("/api/fetch-summary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ conversationId }),
     }).then((r) => r.json());
 
-    console.log('Summary:', summary);
-  }, [conversation]);
+    console.log("Summary:", result);
+
+    if (onSummary && result && !result.error) {
+      onSummary(result);
+    }
+  }, [conversation, onSummary]);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden h-[600px] flex flex-col">
@@ -94,16 +108,16 @@ export default function AgentChatInterface({ agent }: { agent: any }) {
           <div
             key={index}
             className={cn(
-              'flex',
-              message.source === 'ai' ? 'justify-start' : 'justify-end'
+              "flex",
+              message.source === "ai" ? "justify-start" : "justify-end"
             )}
           >
             <div
               className={cn(
-                'max-w-[80%] rounded-lg p-3',
-                message.source === 'ai'
-                  ? 'bg-blue-100 text-blue-900'
-                  : 'bg-blue-600 text-white'
+                "max-w-[80%] rounded-lg p-3",
+                message.source === "ai"
+                  ? "bg-blue-100 text-blue-900"
+                  : "bg-blue-600 text-white"
               )}
             >
               <p className="text-sm">{message.content}</p>

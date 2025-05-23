@@ -1,22 +1,66 @@
-'use client';
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft } from 'lucide-react';
-import { agents } from '@/data/agents';
-import AgentChat from '@/components/AgentChat';
-import ExpenseTracker from '@/components/ExpenseTracker';
+"use client";
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
+import { agents } from "@/data/agents";
+import AgentChat from "@/components/AgentChat";
+import ExpenseTracker from "@/components/ExpenseTracker";
+import { useState } from "react";
 
 // @typescript-ignore
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function AgentPage({ params }: any) {
   const agentId = params.id;
   const agent = agents.find((a) => a.id === agentId);
+  const [expenseReports, setExpenseReports] = useState<
+    {
+      id: string;
+      expenseReportName: string;
+      description?: string;
+      currency: string;
+      cashAdvance?: string;
+      notes?: string;
+      date: string;
+      createdAt: Date;
+    }[]
+  >([]);
 
   if (!agent) {
     notFound();
   }
+
+  // Handler for agent summary (for Expense Analyst)
+  const handleAgentSummary = (summary: Record<string, unknown>) => {
+    if (!summary) return;
+    const newReport = {
+      id: Date.now().toString(),
+      expenseReportName:
+        typeof summary.expenseReportName === "string"
+          ? summary.expenseReportName
+          : "",
+      description:
+        typeof summary.description === "string"
+          ? summary.description
+          : undefined,
+      currency: typeof summary.currency === "string" ? summary.currency : "USD",
+      cashAdvance:
+        typeof summary.cashAdvance === "string"
+          ? summary.cashAdvance
+          : undefined,
+      notes: typeof summary.notes === "string" ? summary.notes : undefined,
+      date:
+        typeof summary.date === "string"
+          ? new Date(summary.date).toISOString()
+          : new Date().toISOString(),
+      createdAt: new Date(),
+    };
+    document
+      .getElementById("#expensereports")
+      ?.scrollIntoView({ behavior: "smooth" });
+    setExpenseReports((prev) => [newReport, ...prev]);
+  };
 
   return (
     <main className="flex min-h-screen flex-col bg-white">
@@ -51,7 +95,7 @@ export default function AgentPage({ params }: any) {
             <div className="flex items-center gap-4 mb-6">
               <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-blue-100">
                 <Image
-                  src={agent.image || '/placeholder.svg'}
+                  src={agent.image || "/placeholder.svg"}
                   alt={agent.name}
                   fill
                   className="object-cover"
@@ -91,17 +135,27 @@ export default function AgentPage({ params }: any) {
 
           {/* Right column - Chat interface */}
           <div className="lg:w-1/2">
-            <AgentChat agent={agent} />
+            <AgentChat
+              agent={agent}
+              onSummary={
+                agent.role === "Expense Analyst"
+                  ? handleAgentSummary
+                  : undefined
+              }
+            />
           </div>
         </div>
       </div>
 
-      {agent.role === 'Expense Analyst' && (
+      {agent.role === "Expense Analyst" && (
         <>
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center my-6">
             ~ or ~
           </h2>
-          <ExpenseTracker />
+          <ExpenseTracker
+            key={expenseReports.length}
+            reportsFromAgent={expenseReports}
+          />
         </>
       )}
 
