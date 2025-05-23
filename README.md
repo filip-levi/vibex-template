@@ -11,6 +11,7 @@ Minimal boilerplate to kickstart full-stack apps.
 
 # Prerequirements
 - NodeJS
+- React
 
 ## Getting Started
 
