@@ -2,6 +2,8 @@
 
 Minimal boilerplate to kickstart full-stack apps.
 
+Created by WebX
+
 ## Features
 
 - ✅ App Router with Next.js 15+
