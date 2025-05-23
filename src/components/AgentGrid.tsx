@@ -13,7 +13,7 @@ export default function AgentGrid() {
       {agents.map((agent) => (
         <div
           key={agent.id}
-          className="relative rounded-2xl overflow-hidden aspect-[4/5] group cursor-pointer shadow-lg border border-gray-200"
+          className="relative rounded-2xl overflow-hidden aspect-[4/5] group shadow-lg border border-gray-200"
         >
           {/* Background image */}
           <div className="absolute inset-0">
@@ -43,7 +43,7 @@ export default function AgentGrid() {
 
           {/* Content */}
           <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
-            <div className="space-y-2">
+            <div className="space-y-2 transform transition-transform duration-300 group-hover:-translate-y-4">
               {/* Always visible content */}
               <div className="space-y-1">
                 <div className="text-sm font-medium uppercase tracking-wider">
@@ -60,13 +60,13 @@ export default function AgentGrid() {
               </div>
 
               {/* Hover content */}
-              <div className="space-y-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                <p className="text-sm text-gray-100 line-clamp-3">
+              <div className="space-y-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 ">
+                <p className="text-sm text-gray-100 line-clamp-3 hidden">
                   {agent.description}
                 </p>
                 <Button
                   className={cn(
-                    'mt-4 bg-gradient-to-r text-white hover:opacity-90 transition-opacity w-full',
+                    'mt-4 bg-gradient-to-r text-white hover:opacity-90 transition-opacity w-full cursor-pointer hidden group-hover:block',
                     agent.color
                   )}
                   onClick={() => router.push(`/agent/${agent.id}`)}

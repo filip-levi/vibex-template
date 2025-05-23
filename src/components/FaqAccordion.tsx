@@ -9,39 +9,39 @@ import {
 
 const faqs = [
   {
-    question: 'How do AI agents work?',
+    question: 'How can I use AI agents for internal Levi9 processes?',
     answer:
-      'Our AI agents use advanced machine learning algorithms and natural language processing to understand and respond to your requests. Each agent is specialized in a specific domain and trained on relevant data to provide expert assistance in their field.',
+      'Our AI agents are designed to streamline internal Levi9 operations. Nova helps with technical documentation and research, Atlas assists with project data analysis, Sage handles internal communications and content creation, Orion supports development tasks, and Echo manages internal support requests. Each agent is trained on Levi9-specific processes and documentation.',
   },
   {
-    question: 'What tasks can the agents help me with?',
+    question: 'What internal tasks can the agents help me with?',
     answer:
-      'Our agents can assist with a wide range of tasks depending on their specialization. Nova can help with research, Atlas with data analysis, Sage with creative writing, Orion with coding tasks, Echo with customer support inquiries, and Luna with language translation.',
+      "Our agents can assist with various internal Levi9 tasks: Nova can help with technical research and documentation, Atlas can analyze project metrics and KPIs, Sage can draft internal communications and reports, Orion can assist with code reviews and development tasks, and Echo can help with internal support and process inquiries. They're all integrated with our internal systems and follow Levi9's best practices.",
   },
   {
-    question: 'How secure is my data when using these agents?',
+    question: 'How secure is my internal data when using these agents?',
     answer:
-      "We take data security very seriously. All communications with our agents are encrypted, and we do not store your personal data beyond what's necessary to provide the service. You can review our privacy policy for more details on how we handle your information.",
+      "All agents operate within Levi9's secure internal network and follow our strict security protocols. They only access authorized internal resources and maintain data confidentiality. All interactions are logged and monitored according to our internal security policies, and agents are regularly audited for compliance.",
   },
   {
-    question: 'Can I customize the agents to better suit my needs?',
+    question: 'Can I customize the agents for my specific team needs?',
     answer:
-      'Yes, our agents can be customized to better understand your preferences and requirements over time. Additionally, our enterprise plans offer more extensive customization options, including training on your specific data and integration with your existing systems.',
+      "Yes, agents can be customized for different Levi9 teams and projects. They can be trained on team-specific documentation, coding standards, and internal processes. Our platform allows you to set up custom workflows and integrate with team-specific tools while maintaining compliance with Levi9's standards.",
   },
   {
-    question: 'How do I get started with using the agents?',
+    question: 'How do I get started with using the agents in my team?',
     answer:
-      "Getting started is simple! Just click the 'Get Started' button, create an account, and you'll have immediate access to all our agents. You can then select the agent that best fits your current needs and begin interacting with them right away.",
+      "Getting started is simple! Log in with your Levi9 credentials, select the agent that best fits your team's needs, and begin using them for your internal tasks. Each agent comes with pre-configured access to relevant internal systems and documentation. You can also request additional integrations through the internal support portal.",
   },
   {
-    question: 'Are there any usage limits for the agents?',
+    question: 'What are the usage guidelines for internal agents?',
     answer:
-      'We offer different plans with varying usage limits. Our free tier allows you to experience the basic capabilities of each agent with some limitations. For unlimited access and advanced features, we recommend upgrading to one of our premium plans.',
+      "Usage is based on your team's access level and project requirements. All agents are available 24/7 for internal use, with priority given to critical business operations. Usage is monitored to ensure optimal resource allocation across teams. For specific usage quotas or additional access, please contact your team lead or the internal support team.",
   },
   {
-    question: 'Can the agents work together on complex tasks?',
+    question: 'How can agents collaborate on complex internal projects?',
     answer:
-      'One of the unique features of our platform is the ability for agents to collaborate. For example, Nova can research a topic, Sage can write content based on that research, and Luna can translate it into multiple languages, all in a seamless workflow.',
+      'Our agents are designed to work together seamlessly on internal projects. For example, Nova can research technical requirements, Atlas can analyze project metrics, Sage can draft project documentation, Orion can assist with implementation, and Echo can handle stakeholder communications. This collaborative approach ensures comprehensive project support while maintaining internal standards and processes.',
   },
 ];
 
