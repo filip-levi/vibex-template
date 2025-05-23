@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useState } from "react";
 import { notFound } from "next/navigation";
@@ -9,6 +10,7 @@ import { agents } from "@/data/agents";
 import AgentChat from "@/components/AgentChat";
 import ExpenseTracker from "@/components/ExpenseTracker";
 import SickLeaveTracker from "@/components/SickLeave";
+import { parseISO, format } from "date-fns";
 
 // @typescript-ignore
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,19 +75,32 @@ export default function AgentPage({ params }: any) {
       setExpenseReports((prev) => [newReport, ...prev]);
     } else if (agent.role === "Well-being Support") {
       // Sick leave bot
-      const start_date =
+      let start_date =
         typeof summary.start_date === "string"
           ? summary.start_date
           : new Date().toISOString().split("T")[0];
-      const end_date =
+      let end_date =
         typeof summary.end_date === "string" ? summary.end_date : "unknown";
       const doctors_note =
         typeof summary.doctors_note === "boolean"
           ? summary.doctors_note
           : false;
+
+      // Format dates for display (YYYY-MM-DD)
+      try {
+        if (start_date && start_date !== "unknown") {
+          start_date = format(parseISO(start_date), "yyyy-MM-dd");
+        }
+        if (end_date && end_date !== "unknown") {
+          end_date = format(parseISO(end_date), "yyyy-MM-dd");
+        }
+      } catch (ignore) {
+        // fallback to raw string if parsing fails
+      }
+
       // Determine status
       let status: "active" | "completed" | "pending" = "pending";
-      const today = new Date().toISOString().split("T")[0];
+      const today = format(new Date(), "yyyy-MM-dd");
       if (start_date <= today) {
         if (end_date === "unknown" || end_date >= today) {
           status = "active";
