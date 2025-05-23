@@ -11,7 +11,6 @@ Minimal boilerplate to kickstart full-stack apps.
 
 # Prerequirements
 - NodeJS
-- DzodeNS
 
 ## Getting Started
 
