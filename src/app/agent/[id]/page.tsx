@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,7 +8,7 @@ import { ChevronLeft } from "lucide-react";
 import { agents } from "@/data/agents";
 import AgentChat from "@/components/AgentChat";
 import ExpenseTracker from "@/components/ExpenseTracker";
-import { useState } from "react";
+import SickLeaveTracker from "@/components/SickLeave";
 
 // @typescript-ignore
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -156,6 +157,15 @@ export default function AgentPage({ params }: any) {
             key={expenseReports.length}
             reportsFromAgent={expenseReports}
           />
+        </>
+      )}
+
+      {agent.role === "Well-being Support" && (
+        <>
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center my-6">
+            ~ or ~
+          </h2>
+          <SickLeaveTracker />
         </>
       )}
 
