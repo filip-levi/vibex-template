@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import type React from 'react';
+import type React from "react";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import {
-  Plus, 
+  Plus,
   Calendar,
   FileText,
   Trash2,
@@ -18,7 +18,7 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
 // Sick Leave type
 type SickLeave = {
@@ -27,39 +27,57 @@ type SickLeave = {
   end_date: string; // Can be 'unknown'
   doctors_note: boolean;
   createdAt: Date;
-  status: 'active' | 'completed' | 'pending';
+  status: "active" | "completed" | "pending";
 };
 
 // Sample data
 const sampleLeaves: SickLeave[] = [
   {
-    id: '1',
-    start_date: '2025-05-20',
-    end_date: '2025-05-22',
+    id: "1",
+    start_date: "2025-05-20",
+    end_date: "2025-05-22",
     doctors_note: true,
-    createdAt: new Date('2025-05-20'),
-    status: 'completed',
+    createdAt: new Date("2025-05-20"),
+    status: "completed",
   },
   {
-    id: '2',
-    start_date: '2025-05-23',
-    end_date: 'unknown',
+    id: "2",
+    start_date: "2025-05-23",
+    end_date: "unknown",
     doctors_note: false,
-    createdAt: new Date('2025-05-23'),
-    status: 'active',
+    createdAt: new Date("2025-05-23"),
+    status: "active",
   },
 ];
 
-export default function SickLeaveTracker() {
-  const [leaves, setLeaves] = useState<SickLeave[]>(sampleLeaves);
+export default function SickLeaveTracker({
+  leavesFromAgent,
+}: {
+  leavesFromAgent?: SickLeave[];
+}) {
+  const [leaves, setLeaves] = useState<SickLeave[]>(
+    leavesFromAgent && leavesFromAgent.length > 0
+      ? [...leavesFromAgent, ...sampleLeaves]
+      : sampleLeaves
+  );
   const [showForm, setShowForm] = useState(false);
   const [editingLeave, setEditingLeave] = useState<SickLeave | null>(null);
   const [formData, setFormData] = useState({
-    start_date: new Date().toISOString().split('T')[0], // Today's date
-    end_date: '',
+    start_date: new Date().toISOString().split("T")[0], // Today's date
+    end_date: "",
     end_date_unknown: false,
     doctors_note: false,
   });
+
+  useEffect(() => {
+    if (leavesFromAgent && leavesFromAgent.length > 0) {
+      setLeaves((prev) => {
+        const existingIds = new Set(prev.map((l) => l.id));
+        const newOnes = leavesFromAgent.filter((l) => !existingIds.has(l.id));
+        return [...newOnes, ...prev];
+      });
+    }
+  }, [leavesFromAgent]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -69,24 +87,24 @@ export default function SickLeaveTracker() {
     e.preventDefault();
 
     if (!formData.start_date) {
-      alert('Please enter a start date');
+      alert("Please enter a start date");
       return;
     }
 
     const endDate = formData.end_date_unknown
-      ? 'unknown'
-      : formData.end_date || 'unknown';
+      ? "unknown"
+      : formData.end_date || "unknown";
 
     // Determine status
-    let status: 'active' | 'completed' | 'pending' = 'pending';
-    const today = new Date().toISOString().split('T')[0];
+    let status: "active" | "completed" | "pending" = "pending";
+    const today = new Date().toISOString().split("T")[0];
     const startDate = formData.start_date;
 
     if (startDate <= today) {
-      if (endDate === 'unknown' || endDate >= today) {
-        status = 'active';
+      if (endDate === "unknown" || endDate >= today) {
+        status = "active";
       } else {
-        status = 'completed';
+        status = "completed";
       }
     }
 
@@ -109,8 +127,8 @@ export default function SickLeaveTracker() {
 
     // Reset form
     setFormData({
-      start_date: new Date().toISOString().split('T')[0],
-      end_date: '',
+      start_date: new Date().toISOString().split("T")[0],
+      end_date: "",
       end_date_unknown: false,
       doctors_note: false,
     });
@@ -122,46 +140,46 @@ export default function SickLeaveTracker() {
     setEditingLeave(leave);
     setFormData({
       start_date: leave.start_date,
-      end_date: leave.end_date === 'unknown' ? '' : leave.end_date,
-      end_date_unknown: leave.end_date === 'unknown',
+      end_date: leave.end_date === "unknown" ? "" : leave.end_date,
+      end_date_unknown: leave.end_date === "unknown",
       doctors_note: leave.doctors_note,
     });
     setShowForm(true);
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this sick leave record?')) {
+    if (confirm("Are you sure you want to delete this sick leave record?")) {
       setLeaves((prev) => prev.filter((leave) => leave.id !== id));
     }
   };
 
   const formatDate = (dateString: string) => {
-    if (dateString === 'unknown') return 'Unknown';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    if (dateString === "unknown") return "Unknown";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const calculateDuration = (startDate: string, endDate: string) => {
-    if (endDate === 'unknown') return 'Ongoing';
+    if (endDate === "unknown") return "Ongoing";
 
     const start = new Date(startDate);
     const end = new Date(endDate);
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-    return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+    return `${diffDays} day${diffDays !== 1 ? "s" : ""}`;
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active':
+      case "active":
         return <Clock className="h-4 w-4" />;
-      case 'completed':
+      case "completed":
         return <CheckCircle className="h-4 w-4" />;
-      case 'pending':
+      case "pending":
         return <AlertCircle className="h-4 w-4" />;
       default:
         return <Clock className="h-4 w-4" />;
@@ -170,19 +188,19 @@ export default function SickLeaveTracker() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active':
-        return 'bg-orange-100 text-orange-800';
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-blue-100 text-blue-800';
+      case "active":
+        return "bg-orange-100 text-orange-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-blue-100 text-blue-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getActiveLeaves = () =>
-    leaves.filter((leave) => leave.status === 'active').length;
+    leaves.filter((leave) => leave.status === "active").length;
   const getTotalDaysThisMonth = () => {
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
@@ -196,7 +214,7 @@ export default function SickLeaveTracker() {
         );
       })
       .reduce((total, leave) => {
-        if (leave.end_date === 'unknown') return total + 1; // Count as 1 day for ongoing
+        if (leave.end_date === "unknown") return total + 1; // Count as 1 day for ongoing
         const start = new Date(leave.start_date);
         const end = new Date(leave.end_date);
         const diffTime = Math.abs(end.getTime() - start.getTime());
@@ -292,7 +310,7 @@ export default function SickLeaveTracker() {
 
         {/* Action Button */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-bold text-gray-800" id="expensereports">
             Sick Leave Records
           </h2>
           <Button
@@ -300,8 +318,8 @@ export default function SickLeaveTracker() {
               setShowForm(!showForm);
               setEditingLeave(null);
               setFormData({
-                start_date: new Date().toISOString().split('T')[0],
-                end_date: '',
+                start_date: new Date().toISOString().split("T")[0],
+                end_date: "",
                 end_date_unknown: false,
                 doctors_note: false,
               });
@@ -309,7 +327,7 @@ export default function SickLeaveTracker() {
             className="bg-blue-600 hover:bg-blue-700"
           >
             <Plus className="h-4 w-4 mr-2" />
-            {showForm ? 'Cancel' : 'New Sick Leave'}
+            {showForm ? "Cancel" : "New Sick Leave"}
           </Button>
         </div>
 
@@ -319,8 +337,8 @@ export default function SickLeaveTracker() {
             <CardHeader>
               <CardTitle>
                 {editingLeave
-                  ? 'Edit Sick Leave Record'
-                  : 'Create New Sick Leave Record'}
+                  ? "Edit Sick Leave Record"
+                  : "Create New Sick Leave Record"}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -333,7 +351,7 @@ export default function SickLeaveTracker() {
                       type="date"
                       value={formData.start_date}
                       onChange={(e) =>
-                        handleInputChange('start_date', e.target.value)
+                        handleInputChange("start_date", e.target.value)
                       }
                       required
                     />
@@ -346,13 +364,13 @@ export default function SickLeaveTracker() {
                       type="date"
                       value={formData.end_date}
                       onChange={(e) =>
-                        handleInputChange('end_date', e.target.value)
+                        handleInputChange("end_date", e.target.value)
                       }
                       disabled={formData.end_date_unknown}
                       placeholder={
                         formData.end_date_unknown
-                          ? 'Unknown'
-                          : 'Select end date'
+                          ? "Unknown"
+                          : "Select end date"
                       }
                     />
                   </div>
@@ -363,9 +381,9 @@ export default function SickLeaveTracker() {
                     id="end_date_unknown"
                     checked={formData.end_date_unknown}
                     onCheckedChange={(checked: string | boolean) => {
-                      handleInputChange('end_date_unknown', checked);
+                      handleInputChange("end_date_unknown", checked);
                       if (checked) {
-                        handleInputChange('end_date', '');
+                        handleInputChange("end_date", "");
                       }
                     }}
                   />
@@ -377,7 +395,7 @@ export default function SickLeaveTracker() {
                     id="doctors_note"
                     checked={formData.doctors_note}
                     onCheckedChange={(checked: string | boolean) =>
-                      handleInputChange('doctors_note', checked)
+                      handleInputChange("doctors_note", checked)
                     }
                   />
                   <Label htmlFor="doctors_note">I have a doctor note</Label>
@@ -388,7 +406,7 @@ export default function SickLeaveTracker() {
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-700"
                   >
-                    {editingLeave ? 'Update Record' : 'Create Record'}
+                    {editingLeave ? "Update Record" : "Create Record"}
                   </Button>
                   <Button
                     type="button"

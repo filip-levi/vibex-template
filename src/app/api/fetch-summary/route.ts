@@ -67,7 +67,40 @@ export async function POST(req: NextRequest) {
 
   // 6) Build result, defaulting date if necessary
   const rawDate = get("date");
-  const result = {
+
+  // Detect if this is a health/sick leave bot by checking for health-specific fields
+  const isHealthBot =
+    !!get("start_date") ||
+    !!get("end_date") ||
+    typeof get("doctors_note") !== "undefined";
+
+  if (isHealthBot) {
+    // Health AI bot fields
+    const start_date = get("start_date") || new Date().toISOString();
+    const end_date = get("end_date") || "unknown";
+    let doctors_note = get("doctors_note");
+    if (typeof doctors_note === "string") {
+      doctors_note = doctors_note.toLowerCase() === "true";
+    } else {
+      doctors_note = Boolean(doctors_note);
+    }
+    const healthResult = {
+      start_date,
+      end_date,
+      doctors_note,
+    };
+    // Validate required fields for health bot
+    if (!healthResult.start_date) {
+      return NextResponse.json(
+        { error: "Missing required fields", analysis: raw },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json(healthResult);
+  }
+
+  // Expense report fields
+  const expenseResult = {
     date:
       rawDate && rawDate.toLowerCase() !== "none"
         ? rawDate
@@ -80,7 +113,7 @@ export async function POST(req: NextRequest) {
   };
 
   // 7) Validate required fields
-  if (!result.expenseReportName || !result.currency) {
+  if (!expenseResult.expenseReportName || !expenseResult.currency) {
     return NextResponse.json(
       { error: "Missing required fields", analysis: raw },
       { status: 500 }
@@ -88,5 +121,5 @@ export async function POST(req: NextRequest) {
   }
 
   // 8) Return trimmed JSON
-  return NextResponse.json(result); // send JSON response :contentReference[oaicite:2]{index=2}
+  return NextResponse.json(expenseResult); // send JSON response :contentReference[oaicite:2]{index=2}
 }

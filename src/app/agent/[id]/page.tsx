@@ -27,6 +27,16 @@ export default function AgentPage({ params }: any) {
       createdAt: Date;
     }[]
   >([]);
+  const [sickLeaves, setSickLeaves] = useState<
+    {
+      id: string;
+      start_date: string;
+      end_date: string;
+      doctors_note: boolean;
+      createdAt: Date;
+      status: "active" | "completed" | "pending";
+    }[]
+  >([]);
 
   if (!agent) {
     notFound();
@@ -35,32 +45,68 @@ export default function AgentPage({ params }: any) {
   // Handler for agent summary (for Expense Analyst)
   const handleAgentSummary = (summary: Record<string, unknown>) => {
     if (!summary) return;
-    const newReport = {
-      id: Date.now().toString(),
-      expenseReportName:
-        typeof summary.expenseReportName === "string"
-          ? summary.expenseReportName
-          : "",
-      description:
-        typeof summary.description === "string"
-          ? summary.description
-          : undefined,
-      currency: typeof summary.currency === "string" ? summary.currency : "USD",
-      cashAdvance:
-        typeof summary.cashAdvance === "string"
-          ? summary.cashAdvance
-          : undefined,
-      notes: typeof summary.notes === "string" ? summary.notes : undefined,
-      date:
-        typeof summary.date === "string"
-          ? new Date(summary.date).toISOString()
-          : new Date().toISOString(),
-      createdAt: new Date(),
-    };
+    if (agent.role === "Expense Analyst") {
+      const newReport = {
+        id: Date.now().toString(),
+        expenseReportName:
+          typeof summary.expenseReportName === "string"
+            ? summary.expenseReportName
+            : "",
+        description:
+          typeof summary.description === "string"
+            ? summary.description
+            : undefined,
+        currency:
+          typeof summary.currency === "string" ? summary.currency : "USD",
+        cashAdvance:
+          typeof summary.cashAdvance === "string"
+            ? summary.cashAdvance
+            : undefined,
+        notes: typeof summary.notes === "string" ? summary.notes : undefined,
+        date:
+          typeof summary.date === "string"
+            ? new Date(summary.date).toISOString()
+            : new Date().toISOString(),
+        createdAt: new Date(),
+      };
+
+      setExpenseReports((prev) => [newReport, ...prev]);
+    } else if (agent.role === "Well-being Support") {
+      // Sick leave bot
+      const start_date =
+        typeof summary.start_date === "string"
+          ? summary.start_date
+          : new Date().toISOString().split("T")[0];
+      const end_date =
+        typeof summary.end_date === "string" ? summary.end_date : "unknown";
+      const doctors_note =
+        typeof summary.doctors_note === "boolean"
+          ? summary.doctors_note
+          : false;
+      // Determine status
+      let status: "active" | "completed" | "pending" = "pending";
+      const today = new Date().toISOString().split("T")[0];
+      if (start_date <= today) {
+        if (end_date === "unknown" || end_date >= today) {
+          status = "active";
+        } else {
+          status = "completed";
+        }
+      }
+      const newLeave = {
+        id: Date.now().toString(),
+        start_date,
+        end_date,
+        doctors_note,
+        createdAt: new Date(),
+        status,
+      };
+      setSickLeaves((prev) => [newLeave, ...prev]);
+    }
+
     document
       .getElementById("#expensereports")
       ?.scrollIntoView({ behavior: "smooth" });
-    setExpenseReports((prev) => [newReport, ...prev]);
   };
 
   return (
@@ -136,14 +182,7 @@ export default function AgentPage({ params }: any) {
 
           {/* Right column - Chat interface */}
           <div className="lg:w-1/2">
-            <AgentChat
-              agent={agent}
-              onSummary={
-                agent.role === "Expense Analyst"
-                  ? handleAgentSummary
-                  : undefined
-              }
-            />
+            <AgentChat agent={agent} onSummary={handleAgentSummary} />
           </div>
         </div>
       </div>
@@ -165,7 +204,10 @@ export default function AgentPage({ params }: any) {
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center my-6">
             ~ or ~
           </h2>
-          <SickLeaveTracker />
+          <SickLeaveTracker
+            key={sickLeaves.length}
+            leavesFromAgent={sickLeaves}
+          />
         </>
       )}
 
