@@ -1,0 +1,106 @@
+'use client';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft } from 'lucide-react';
+import { agents } from '@/data/agents';
+import AgentChat from '@/components/AgentChat';
+
+export default function AgentPage({ params }: { params: { id: string } }) {
+  const agentId = params.id;
+  const agent = agents.find((a) => a.id === agentId);
+
+  if (!agent) {
+    notFound();
+  }
+
+  return (
+    <main className="flex min-h-screen flex-col bg-white">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link href="/">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-blue-700/20"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+              </Link>
+              <h1 className="text-2xl font-bold">{agent.name}</h1>
+              <span className="text-sm bg-white/20 px-3 py-1 rounded-full">
+                {agent.role}
+              </span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <div className="flex-1 container mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left column - Agent information */}
+          <div className="lg:w-1/2 space-y-6">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-blue-100">
+                <Image
+                  src={agent.image || '/placeholder.svg'}
+                  alt={agent.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-800">
+                  {agent.name}
+                </h2>
+                <p className="text-blue-600">{agent.role}</p>
+              </div>
+            </div>
+
+            <div className="prose max-w-none">
+              <p className="text-gray-700 leading-relaxed">
+                {agent.longDescription}
+              </p>
+            </div>
+
+            <div className="bg-blue-50 p-6 rounded-xl">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                Key Capabilities
+              </h3>
+              <ul className="space-y-2">
+                {agent.capabilities.map((capability, index) => (
+                  <li
+                    key={index}
+                    className="flex items-center gap-2 text-gray-700"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                    {capability}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Right column - Chat interface */}
+          <div className="lg:w-1/2">
+            <AgentChat agent={agent} />
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-blue-800 text-white py-6">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-blue-100">
+            © {new Date().getFullYear()} AgentHub. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </main>
+  );
+}
