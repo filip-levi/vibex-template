@@ -230,7 +230,7 @@ export default function AgentPage({ params }: any) {
       <footer className="bg-blue-800 text-white py-6">
         <div className="container mx-auto px-4 text-center">
           <p className="text-blue-100">
-            © {new Date().getFullYear()} AgentHub. All rights reserved.
+            © {new Date().getFullYear()} VibeX by WebX. All rights reserved.
           </p>
         </div>
       </footer>
