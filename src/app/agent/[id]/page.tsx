@@ -7,6 +7,7 @@ import { ChevronLeft } from 'lucide-react';
 import { agents } from '@/data/agents';
 import AgentChat from '@/components/AgentChat';
 import ExpenseTracker from '@/components/ExpenseTracker';
+import SickLeaveTracker from '@/components/SickLeave';
 
 // @typescript-ignore
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,6 +103,15 @@ export default function AgentPage({ params }: any) {
             ~ or ~
           </h2>
           <ExpenseTracker />
+        </>
+      )}
+
+      {agent.role === 'Well-being Support' && (
+        <>
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center my-6">
+            ~ or ~
+          </h2>
+          <SickLeaveTracker />
         </>
       )}
 
