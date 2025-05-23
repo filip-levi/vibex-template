@@ -12,27 +12,27 @@ export default function Home() {
           <div className="flex md:flex-row items-center gap-12">
             {/* Left side - Text content */}
             <div className="w-[50%] space-y-6">
-              <h1 className="text-4xl md:text-6xl font-bold">AgentHub</h1>
+              <h1 className="text-4xl md:text-6xl font-bold">
+                Levi9 Internal Help Desk
+              </h1>
               <p className="text-xl text-blue-100 leading-relaxed">
-                Discover a collection of specialized AI agents designed to help
-                with various tasks. Each with unique capabilities and
-                personalities, our agents are trained to assist you in research,
-                data analysis, creative writing, coding, and more.
+                Welcome to your internal company command center, where AI agents
+                streamline your daily operations.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button
                   size="lg"
-                  className="bg-white text-blue-700 hover:bg-blue-50"
+                  className="bg-white text-blue-700 hover:bg-blue-50 hover:cursor-pointer"
                 >
                   Get Started
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
                 <Button
                   size="lg"
-                  variant="outline"
-                  className="border-white text-white hover:bg-blue-700/20"
+                  className="bg-white text-blue-700 hover:bg-blue-50 hover:cursor-pointer"
                 >
-                  Learn More
+                  Learn More!
+                  <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
             </div>
