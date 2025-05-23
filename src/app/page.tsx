@@ -1,5 +1,6 @@
 import AgentGrid from '@/components/AgentGrid';
 import FaqAccordion from '@/components/FaqAccordion';
+import HelpDeskAgent from '@/components/HelpDesk';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 
@@ -133,10 +134,13 @@ export default function Home() {
       <footer className="bg-blue-800 text-white py-12">
         <div className="container mx-auto px-4 text-center">
           <p className="text-blue-100">
-            © {new Date().getFullYear()} AgentHub. All rights reserved.
+            © {new Date().getFullYear()} VibeX by WebX. All rights reserved.
           </p>
         </div>
       </footer>
+
+      {/* Help Desk Agent - Fixed Position */}
+      <HelpDeskAgent />
     </main>
   );
 }
