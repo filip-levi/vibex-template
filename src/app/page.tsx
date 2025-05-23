@@ -1,8 +1,8 @@
-import AgentGrid from '@/components/AgentGrid';
-import FaqAccordion from '@/components/FaqAccordion';
-import HelpDeskAgent from '@/components/HelpDesk';
-import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
+import AgentGrid from "@/components/AgentGrid";
+import FaqAccordion from "@/components/FaqAccordion";
+import HelpDeskAgent from "@/components/HelpDesk";
+import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
 
 export default function Home() {
   return (
@@ -128,6 +128,15 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <FaqAccordion />
         </div>
+      </section>
+
+      <section className="container mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+          Reason #538 to be a Niner:
+          <span className="text-blue-600">
+            We love to try out new technologies and ✨<i>shine</i>✨
+          </span>
+        </h2>
       </section>
 
       {/* Footer - Blue Background */}
