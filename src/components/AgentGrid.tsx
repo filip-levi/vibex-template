@@ -3,76 +3,17 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
-
-const agents = [
-  {
-    id: 1,
-    name: 'Penny Niner',
-    role: 'Expense Analyst',
-    description:
-      'Meticulously processes your expense reports, ensuring accuracy and compliance with company policies. Its analytical skills help streamline the reimbursement process.',
-    image: '/images/expense.png',
-    color: 'from-orange-300 to-orange-700',
-  },
-  {
-    id: 2,
-    name: 'Niner Care',
-    role: 'Well-being Support',
-    description:
-      'Provides friendly and efficient support for your sick leave requests, ensuring you can take the time you need to rest and recover.',
-    image: '/images/healthcare.png',
-    color: 'from-lime-500 to-green-600',
-  },
-  {
-    id: 3,
-    name: 'Levi Learner',
-    role: 'Education and Social Facilitator',
-    description:
-      'Crafts engaging information and facilitates sign-ups for educational and social activities, fostering a vibrant company culture.',
-    image: '/images/education.png',
-    color: 'from-red-500 to-orange-500',
-  },
-  {
-    id: 4,
-    name: 'Levi Voyager',
-    role: 'Travel Coordinator',
-    description:
-      'Assists with your corporate travel needs by researching and organizing your trips, aiming for a smooth and efficient experience.',
-    image: '/images/travel.png',
-    color: 'from-blue-500 to-teal-600',
-  },
-  {
-    id: 5,
-    name: 'Book-It Niner',
-    role: 'Asset Manager',
-    description:
-      'Helps you easily find and book internal assets, ensuring efficient access to the tools and spaces you need.',
-    image: '/images/asset.png',
-    color: 'from-orange-800 to-orange-600',
-  },
-  {
-    id: 6,
-    name: 'Fix-It Niner',
-    role: 'Maintenance Assistant',
-    description:
-      'Efficiently handles your maintenance reports, helping to get issues resolved promptly and keep your work environment in good condition.',
-    image: '/images/maintenance.png',
-    color: 'from-gray-400 to-violet-600',
-  },
-];
+import { agents } from '@/data/agents';
+import { useRouter } from 'next/navigation';
 
 export default function AgentGrid() {
-  const [, setActiveId] = useState<number | null>(null);
-
+  const router = useRouter();
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {agents.map((agent) => (
         <div
           key={agent.id}
           className="relative rounded-2xl overflow-hidden aspect-[4/5] group cursor-pointer shadow-lg border border-gray-200"
-          onMouseEnter={() => setActiveId(agent.id)}
-          onMouseLeave={() => setActiveId(null)}
         >
           {/* Background image */}
           <div className="absolute inset-0">
@@ -128,6 +69,7 @@ export default function AgentGrid() {
                     'mt-4 bg-gradient-to-r text-white hover:opacity-90 transition-opacity w-full',
                     agent.color
                   )}
+                  onClick={() => router.push(`/agent/${agent.id}`)}
                 >
                   Connect with {agent.name}
                 </Button>

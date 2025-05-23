@@ -1,7 +1,6 @@
 import AgentGrid from '@/components/AgentGrid';
 import FaqAccordion from '@/components/FaqAccordion';
 import { Button } from '@/components/ui/button';
-import Spline from '@splinetool/react-spline';
 import { ChevronRight } from 'lucide-react';
 
 export default function Home() {
